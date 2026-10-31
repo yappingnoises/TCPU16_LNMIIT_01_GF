@@ -13,8 +13,9 @@ async def F01(dut):
 
     cocotb.log.info("Reset")
     dut.ena.value = 1
+    dut.ui_in.value = 0
     dut.rst_n.value = 0
-    dut.uio_in[1].value = 0 #run = 0 
+    dut.uio_in.value = 0 #run = 0 
     await ClockCycles(dut.clk, 4) #waiting for 4 edges to wait for synchronise. 3 is minimum
     dut.rst_n.value = 1 #rst_n deassert
     await ClockCycles(dut.clk,3)
