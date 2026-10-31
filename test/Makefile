@@ -6,7 +6,7 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = tt_um_yappingnoises_TCPU16.v toy_cpu16.v prog_mem.v prog_loader.v PC.v IR.v ALU.v
 
 ifneq ($(GATES),yes)
 
