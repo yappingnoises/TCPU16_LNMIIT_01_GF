@@ -7,9 +7,13 @@
 module tb ();
 
   // Dump the signals to a FST file. You can view it with gtkwave or surfer.
+integer i;
   initial begin
     $dumpfile("tb.fst");
     $dumpvars(0, tb);
+     for (i = 0; i < 8; i = i + 1) begin
+        $dumpvars(0, tcpu.cpu.u_prog_mem.mem[i]);
+    end
     #1;
   end
 
