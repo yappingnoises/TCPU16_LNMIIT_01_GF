@@ -19,6 +19,10 @@ To learn more and get started, visit https://tinytapeout.com.
 
 The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
 
+## Local GF180 gate-level tests
+
+After following the [local hardening guide](https://www.tinytapeout.com/guides/local-hardening/) and installing the GF180 PDK at `~/ttsetup/pdk`, run the gate-level simulation from `test/` with `make -B GATES=yes`. The test Makefile uses that PDK location by default; if yours is elsewhere, override it with `make -B GATES=yes PDK_ROOT=/path/to/pdk`. See [test/README.md](test/README.md) for details.
+
 ## Enable GitHub actions to build the results page
 
 - [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
