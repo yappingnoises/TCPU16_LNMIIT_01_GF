@@ -1,46 +1,62 @@
-![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
+# TCPU-16
 
-# Tiny Tapeout Verilog Project Template
+TCPU-16 is a small, single-cycle 16-bit accumulator CPU designed for a 1x1
+Tiny Tapeout tile using the GF180MCU process. It has an 8-bit instruction
+format, an 8-word program memory, and a serial program-loading interface.
 
-- [Read the documentation for project](docs/info.md)
+The CPU implements `LOAD`, `ADD`, `SUB`, `SHL`, `XOR`, `JMP`, `JZ`, and
+`HALT`. Its 16-bit accumulator is read one byte at a time through the output
+pins. See the [Tiny Tapeout project datasheet](docs/info.md) for the full
+architecture, instruction set, pin mapping, and programming example.
 
-## What is Tiny Tapeout?
+## Project status
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+The repository includes RTL and Cocotb testbenches for RTL and gate-level
+simulation, along with Tiny Tapeout workflows for testing, GF180 hardening,
+precheck, gate-level testing, and the results viewer. Locally generated
+hardening artifacts are from an earlier source commit; see
+[verification and implementation status](docs/verification.md) before relying
+on their results.
 
-To learn more and get started, visit https://tinytapeout.com.
+## Run RTL tests
 
-## Set up your Verilog project
+Install Icarus Verilog and the Python packages in
+[`test/requirements.txt`](test/requirements.txt), then run:
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+```sh
+cd test
+make clean
+make
+python -m cocotb_tools.check_results results.xml
+```
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+For local GF180 gate-level simulation, first follow the
+[Tiny Tapeout local hardening guide](https://www.tinytapeout.com/guides/local-hardening/)
+and install the PDK. Then run from `test/`:
 
-## Local GF180 gate-level tests
+```sh
+make clean
+make GATES=yes
+python -m cocotb_tools.check_results results.xml
+```
 
-After following the [local hardening guide](https://www.tinytapeout.com/guides/local-hardening/) and installing the GF180 PDK at `~/ttsetup/pdk`, run the gate-level simulation from `test/` with `make -B GATES=yes`. The test Makefile uses that PDK location by default; if yours is elsewhere, override it with `make -B GATES=yes PDK_ROOT=/path/to/pdk`. See [test/README.md](test/README.md) for details.
+The gate-level flow uses `~/ttsetup/pdk` by default. Override it with
+`PDK_ROOT=/path/to/pdk` if needed. See the [test instructions](test/README.md)
+and [verification notes](docs/verification.md) for details and coverage
+limitations.
 
-## Enable GitHub actions to build the results page
+## Repository map
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+- [`src/`](src/) — CPU RTL and Tiny Tapeout wrapper.
+- [`test/`](test/) — Cocotb testbenches and simulation setup.
+- [`docs/info.md`](docs/info.md) — datasheet content consumed by Tiny Tapeout.
+- [`docs/verification.md`](docs/verification.md) — how to run tests, what they
+  currently check, CI workflows, and hardening evidence.
+- `runs/wokwi/` — local hardening logs and generated artifacts when a flow has
+  been run; these outputs are not tracked in the repository.
 
-## Resources
+## Tiny Tapeout resources
 
-- [FAQ](https://tinytapeout.com/faq/)
+- [Tiny Tapeout](https://tinytapeout.com/)
+- [Local hardening guide](https://www.tinytapeout.com/guides/local-hardening/)
 - [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
