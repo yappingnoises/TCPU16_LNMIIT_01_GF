@@ -3,7 +3,7 @@
 *.vcd
 *.fst
 *.fst.hier
-/tt/
+tt
 runs
 tt_submission
 src/user_config.json
