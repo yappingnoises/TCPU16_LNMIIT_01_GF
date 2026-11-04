@@ -3,8 +3,8 @@
 *.vcd
 *.fst
 *.fst.hier
-/tt/
 runs
+tt
 tt_submission
 src/user_config.json
 src/config_merged.json
