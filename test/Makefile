@@ -7,12 +7,15 @@ FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
 PROJECT_SOURCES = tt_um_yappingnoises_TCPU16.v toy_cpu16.v prog_mem.v prog_loader.v PC.v IR.v ALU.v
+PDK_ROOT ?= $(HOME)/ttsetup/pdk
 
 ifneq ($(GATES),yes)
 
 # RTL simulation:
 SIM_BUILD				= sim_build/rtl
 VERILOG_SOURCES += $(addprefix $(SRC_DIR)/,$(PROJECT_SOURCES))
+COCOTB_TEST_MODULES = F01_rtl,F02_rtl,F03_rtl,F04_rtl,test_prog_loader 
+export PYTHONPATH := $(PWD)/rtl_tb:$(PYTHONPATH)
 
 else
 
@@ -28,6 +31,8 @@ VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilo
 
 # this gets copied in by the GDS action workflow
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
+COCOTB_TEST_MODULES = F01
+export PYTHONPATH := $(PWD)/gl_tb:$(PYTHONPATH)
 
 endif
 
@@ -37,9 +42,6 @@ COMPILE_ARGS 		+= -I$(SRC_DIR)
 # Include the testbench sources:
 VERILOG_SOURCES += $(PWD)/tb.v
 TOPLEVEL = tb
-
-# List test modules to run, separated by commas and without the .py suffix:
-COCOTB_TEST_MODULES = test2
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
