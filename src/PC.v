@@ -11,12 +11,22 @@ module PC(
 reg [2:0] current_pc;
 
 always @(posedge clk) begin
-    if(~rst_n) begin
-        current_pc <= 3'b000;
-    end else if(i_en) begin
-        current_pc <= i_jump_en ? i_jump_addr : (current_pc + 1'b1); //increment pc if not halted and not jumping
-    end
+    current_pc <= rst_n ? (i_en ? (i_jump_en ? i_jump_addr : current_pc + 3'b001) : current_pc) : 3'b000;
 end
+
+
+// always @(posedge clk) begin
+//     if(~rst_n) begin 
+//         current_pc <= 3'b000;
+//     end else
+//         if(i_en) begin
+//             if(i_jump_en) begin
+//                 current_pc <= i_jump_addr;
+//             end else begin
+//                 current_pc <= current_pc + 3'b001; //increment pc if not halted and not jumping
+//             end
+//         end
+// end
 
 assign o_pc = current_pc;
 

@@ -46,7 +46,7 @@ wire [2:0] pc_next; //next PC value from PC module
 wire [15:0] alu_acc_out; //ALU computed accumulator
 wire alu_acc_wr; //ALU writes to ACC
 wire alu_halted; //ALU halt detected
-wire [7:0] ir_val; //IR registered instruction
+//wire [7:0] ir_val; //IR registered instruction
 
 
 assign execute = run_sync & ~halted;
@@ -79,7 +79,7 @@ IR u_IR (
     .rst_n(rst_sync),
     .i_instr(instr),
     .i_execute(execute),
-    .o_ir(ir_val)
+    .o_ir(ir)
 );
 
 ALU u_ALU (
@@ -98,18 +98,18 @@ PC u_PC (
     .i_jump_en(jump_en),
     .i_en(execute),
     .i_jump_addr(jump_addr),
-    .o_pc(pc_next)
+    .o_pc(pc)
 ); //B
 
 always @(posedge clk) begin
     if(!rst_sync) begin
         acc    <= 16'h0000;
-        pc     <= 3'b000;
-        ir     <= 8'h00;
+        //pc     <= 3'b000;
+        //ir     <= 8'h00;
         halted <= 1'b0;
     end else if(execute) begin
-        pc     <= pc_next;
-        ir     <= instr;
+       // pc     <= pc_next;
+       // ir     <= instr;
         halted <= alu_halted;
         if(alu_acc_wr) begin
             acc <= alu_acc_out;
