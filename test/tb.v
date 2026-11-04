@@ -11,9 +11,9 @@ integer i;
   initial begin
     $dumpfile("tb.fst");
     $dumpvars(0, tb);
-     for (i = 0; i < 8; i = i + 1) begin
-        $dumpvars(0, tcpu.cpu.u_prog_mem.mem[i]);
-    end
+    //  for (i = 0; i < 8; i = i + 1) begin
+    //     $dumpvars(0, tcpu.cpu.u_prog_mem.mem[i]);
+    // end
     #1;
   end
 
