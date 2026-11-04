@@ -1,5 +1,5 @@
 # TCPU-16
-
+![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 TCPU-16 is a small, single-cycle 16-bit accumulator CPU designed for a 1x1
 Tiny Tapeout tile using the GF180MCU process. It has an 8-bit instruction
 format, an 8-word program memory, and a serial program-loading interface.
