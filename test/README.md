@@ -4,7 +4,10 @@ The Cocotb testbench drives the TCPU-16 Tiny Tapeout wrapper for RTL and
 gate-level simulation. For general Cocotb testing guidance, see the
 [Tiny Tapeout testing guide](https://tinytapeout.com/hdl/testing/).
 
-For test coverage, CI workflows, and hardening evidence, see the
+The verification-plan tests are split by behavior into separate modules and
+share setup and driver coroutines from `testbenches/coros/`. The same tests run
+against RTL and gate-level simulations. For the coverage summary, CI
+workflows, and hardening evidence, see the
 [project verification notes](../docs/verification.md).
 
 ## Prerequisites
@@ -22,14 +25,18 @@ make
 python -m cocotb_tools.check_results results.xml
 ```
 
-The Makefile selects `F01_rtl`–`F04_rtl` and `test_prog_loader` for RTL
-simulation.
+The Makefile selects the test modules in `testbenches/` for RTL simulation.
+Together they cover F01–F43, the Mode O synchronizer-latency check, and a
+deterministic reference-model test over 1,000 fully initialized programs with
+64 randomized run-control edges each. RTL runs also compare the architectural
+registers to the reference model when those internal signals are available.
 
 ## Gate-level simulation
 
-First harden the design. The Tiny Tapeout flow writes the powered GF180
-netlist to `runs/wokwi/final/pnl/{top_module}.pnl.v`. From this directory,
-copy the TCPU-16 netlist and run the test:
+First harden the current RTL. The Tiny Tapeout flow writes the powered GF180
+netlist to `runs/wokwi/final/pnl/{top_module}.pnl.v`. Do not reuse a netlist
+from an older RTL revision. From this directory, copy the newly generated
+TCPU-16 netlist and run the test:
 
 ```sh
 cp ../runs/wokwi/final/pnl/tt_um_yappingnoises_TCPU16.pnl.v gate_level_netlist.v
@@ -45,9 +52,15 @@ is installed elsewhere:
 make GATES=yes PDK_ROOT=/path/to/pdk
 ```
 
-Gate-level netlists do not guarantee that RTL-internal hierarchy is available.
-Tests should check top-level pins and allow standard-cell delays to settle
-before sampling outputs.
+Gate-level simulations use the same test module. Functional checks use the
+Tiny Tapeout pins and allow standard-cell delays to settle before sampling
+outputs; internal-register checks are performed only when RTL hierarchy is
+available.
+
+In this workspace, `gate_level_netlist.v` was regenerated from the current
+checkout (`a47cac1`) and all eight grouped tests pass in gate-level simulation.
+The older hardening snapshot under `runs/wokwi/` is intentionally preserved;
+do not copy its netlist over the current test netlist.
 
 ## View the waveform
 
