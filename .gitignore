@@ -10,7 +10,8 @@ src/user_config.json
 src/config_merged.json
 test/sim_build
 test/__pycache__/
-test/gl_tb/__pycache__/
-test/rtl_tb/__pycache__/
+test/testbenches/__pycache__/
+test/testbenches/coros/__pycache__/
 test/results.xml
 test/gate_level_netlist.v
+vplan

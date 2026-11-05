@@ -13,8 +13,9 @@ architecture, instruction set, pin mapping, and programming example.
 
 The repository includes RTL and Cocotb testbenches for RTL and gate-level
 simulation, along with Tiny Tapeout workflows for testing, GF180 hardening,
-precheck, gate-level testing, and the results viewer. Locally generated
-hardening artifacts are from an earlier source commit; see
+precheck, gate-level testing, and the results viewer. The preserved
+`runs/wokwi/` hardening snapshot is from an earlier source commit; the latest
+RTL and gate-level test runs pass using a separately regenerated netlist. See
 [verification and implementation status](docs/verification.md) before relying
 on their results.
 
