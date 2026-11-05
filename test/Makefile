@@ -5,8 +5,11 @@
 SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
-SRC_DIR = $(PWD)/../src
+TEST_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+SRC_DIR := $(abspath $(TEST_DIR)/../src)
 PROJECT_SOURCES = tt_um_yappingnoises_TCPU16.v toy_cpu16.v prog_mem.v prog_loader.v PC.v IR.v ALU.v
+COCOTB_TEST_MODULES = test_reset_loading,test_alu,test_control_flow,test_execution,test_interface,test_reference_model,test_synchronizer
+export PYTHONPATH := $(TEST_DIR)/testbenches:$(PYTHONPATH)
 PDK_ROOT ?= $(HOME)/ttsetup/pdk
 
 ifneq ($(GATES),yes)
@@ -14,8 +17,6 @@ ifneq ($(GATES),yes)
 # RTL simulation:
 SIM_BUILD				= sim_build/rtl
 VERILOG_SOURCES += $(addprefix $(SRC_DIR)/,$(PROJECT_SOURCES))
-COCOTB_TEST_MODULES = F01_rtl,F02_rtl,F03_rtl,F04_rtl,test_prog_loader 
-export PYTHONPATH := $(PWD)/rtl_tb:$(PYTHONPATH)
 
 else
 
@@ -30,9 +31,7 @@ VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilo
 VERILOG_SOURCES += $(PDK_ROOT)/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/verilog/gf180mcu_fd_sc_mcu7t5v0.v
 
 # this gets copied in by the GDS action workflow
-VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
-COCOTB_TEST_MODULES = F01
-export PYTHONPATH := $(PWD)/gl_tb:$(PYTHONPATH)
+VERILOG_SOURCES += $(TEST_DIR)/gate_level_netlist.v
 
 endif
 
@@ -40,7 +39,7 @@ endif
 COMPILE_ARGS 		+= -I$(SRC_DIR)
 
 # Include the testbench sources:
-VERILOG_SOURCES += $(PWD)/tb.v
+VERILOG_SOURCES += $(TEST_DIR)/tb.v
 TOPLEVEL = tb
 
 # include cocotb's make rules to take care of the simulator setup
