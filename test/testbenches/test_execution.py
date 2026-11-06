@@ -23,15 +23,14 @@ from coros.bench import (
     tick,
 )
 
-@cocotb.test()
-async def test_vplan_halt_pause_and_wrap(dut):
-    await start(dut)
 
-    # F30: HALT freezes execution across clock edges and run toggles.
+@cocotb.test(name="F30")
+async def test_f30_halt_freezes_execution(dut):
+    await start(dut)
     await load_program(
         dut,
         [instruction(LOAD, 17), instruction(HALT, 31)]
-        + [instruction(ADD, 1)] * 6
+        + [instruction(ADD, 1)] * 6,
     )
     await start_running(dut)
     await expect_next(dut, 17, "F30 LOAD")
@@ -41,19 +40,36 @@ async def test_vplan_halt_pause_and_wrap(dut):
     await tick(dut, 10)
     await expect_acc(dut, 17, "F30 halted freeze")
     if cpu is not None:
-        assert architectural_state(cpu) == halt_state, "F30 architectural state changed after HALT"
+        assert architectural_state(cpu) == halt_state, (
+            "F30 architectural state changed after HALT"
+        )
     await drive(dut, run=0)
     await tick(dut, 3)
     await expect_acc(dut, 17, "F30 halted with run low")
     if cpu is not None:
-        assert architectural_state(cpu) == halt_state, "F30 run-low toggle changed halted state"
+        assert architectural_state(cpu) == halt_state, (
+            "F30 run-low toggle changed halted state"
+        )
     await drive(dut, run=1)
     await tick(dut, 5)
     await expect_acc(dut, 17, "F30 halted with run high")
     if cpu is not None:
-        assert architectural_state(cpu) == halt_state, "F30 run-high toggle changed halted state"
+        assert architectural_state(cpu) == halt_state, (
+            "F30 run-high toggle changed halted state"
+        )
 
-    # F31: run toggles do not clear HALT; reset does.
+
+@cocotb.test(name="F31")
+async def test_f31_halt_stays_sticky_until_reset(dut):
+    await start(dut)
+    await load_program(
+        dut,
+        [instruction(LOAD, 17), instruction(HALT, 31)]
+        + [instruction(ADD, 1)] * 6,
+    )
+    await start_running(dut)
+    await expect_next(dut, 17, "F31 LOAD")
+    await expect_next(dut, 17, "F31 HALT")
     await drive(dut, run=0)
     await tick(dut, 3)
     await load_word(dut, instruction(LOAD, 23))
@@ -64,15 +80,17 @@ async def test_vplan_halt_pause_and_wrap(dut):
     await start_running(dut)
     await expect_next(dut, 23, "F31 reset releases HALT")
 
-    # F32/F33: pausing holds state; resuming continues at the held PC.
-    await reset(dut)
+
+@cocotb.test(name="F32")
+async def test_f32_pause_holds_cpu_state(dut):
+    await start(dut)
     await load_program(
         dut,
-        [instruction(LOAD, 5)] + [instruction(ADD, 1)] * 7
+        [instruction(LOAD, 5)] + [instruction(ADD, 1)] * 7,
     )
     await start_running(dut)
-    await expect_next(dut, 5, "F32/F33 LOAD")
-    await expect_next(dut, 6, "F32/F33 first ADD")
+    await expect_next(dut, 5, "F32 LOAD")
+    await expect_next(dut, 6, "F32 first ADD")
     await drive(dut, run=0)
     await tick(dut, 3)
     paused_value = await accumulator(dut)
@@ -81,13 +99,34 @@ async def test_vplan_halt_pause_and_wrap(dut):
     await tick(dut, 5)
     assert await accumulator(dut) == paused_value, "F32 paused ACC changed"
     if cpu is not None:
-        assert architectural_state(cpu) == paused_state, "F32 architectural state changed while paused"
+        assert architectural_state(cpu) == paused_state, (
+            "F32 architectural state changed while paused"
+        )
+
+
+@cocotb.test(name="F33")
+async def test_f33_resume_continues_at_held_pc(dut):
+    await start(dut)
+    await load_program(
+        dut,
+        [instruction(LOAD, 5)] + [instruction(ADD, 1)] * 7,
+    )
+    await start_running(dut)
+    await expect_next(dut, 5, "F33 LOAD")
+    await expect_next(dut, 6, "F33 first ADD")
+    await drive(dut, run=0)
+    await tick(dut, 3)
+    paused_value = await accumulator(dut)
+    await tick(dut, 5)
+    assert await accumulator(dut) == paused_value, "F33 paused ACC changed"
     await drive(dut, run=1)
     await tick(dut, 2)
     await expect_next(dut, paused_value + 1, "F33 resume from held PC")
 
-    # F34: sequential execution wraps from PC 7 to PC 0.
-    await reset(dut)
+
+@cocotb.test(name="F34")
+async def test_f34_sequential_execution_wraps_pc(dut):
+    await start(dut)
     await load_program(dut, [instruction(ADD, 1)] * PROGRAM_WORDS)
     await start_running(dut)
     for step in range(1, 10):
@@ -96,14 +135,13 @@ async def test_vplan_halt_pause_and_wrap(dut):
         if cpu is not None:
             assert read_resolvable(cpu.pc, f"F34 PC after step {step}") == step % 8
 
-@cocotb.test()
-async def test_vplan_run_load_reset_edges(dut):
-    await start(dut)
 
-    # F39: a load strobe coincident with run is rejected.
+@cocotb.test(name="F39")
+async def test_f39_run_blocks_program_load(dut):
+    await start(dut)
     await load_program(
         dut,
-        [instruction(LOAD, 5)] + [instruction(ADD, 1)] * 7
+        [instruction(LOAD, 5)] + [instruction(ADD, 1)] * 7,
     )
     await start_running(dut)
     await expect_next(dut, 5, "F39 initial LOAD")
@@ -114,8 +152,10 @@ async def test_vplan_run_load_reset_edges(dut):
     await tick(dut, 4)
     await expect_acc(dut, 5, "F39 run blocks load at wrapped PC")
 
-    # F40: a level held across reset release must not create another write.
-    await reset(dut)
+
+@cocotb.test(name="F40")
+async def test_f40_held_load_across_reset_release_does_not_write(dut):
+    await start(dut)
     await load_program(dut, [instruction(HALT)] * PROGRAM_WORDS)
     await start_running(dut)
     await drive(dut, prog_load=1)
@@ -130,12 +170,14 @@ async def test_vplan_run_load_reset_edges(dut):
     await start_running(dut)
     await expect_next(dut, 0, "F40 held load did not overwrite halted word")
 
-    # F41: program memory can be written while halted, without resuming CPU.
-    await reset(dut)
+
+@cocotb.test(name="F41")
+async def test_f41_program_can_be_written_while_halted(dut):
+    await start(dut)
     await load_program(
         dut,
         [instruction(LOAD, 11), instruction(HALT)]
-        + [instruction(ADD, 1)] * 6
+        + [instruction(ADD, 1)] * 6,
     )
     await start_running(dut)
     await expect_next(dut, 11, "F41 LOAD")
@@ -147,13 +189,17 @@ async def test_vplan_run_load_reset_edges(dut):
     await load_word(dut, instruction(LOAD, 25))
     await expect_acc(dut, 11, "F41 write while halted")
     if cpu is not None:
-        assert architectural_state(cpu) == halt_state, "F41 program write resumed halted CPU"
+        assert architectural_state(cpu) == halt_state, (
+            "F41 program write resumed halted CPU"
+        )
     await reset(dut)
     await start_running(dut)
     await expect_next(dut, 25, "F41 written word executes after reset")
 
-    # F42: reset during loading resets the address, but preserves earlier words.
-    await reset(dut)
+
+@cocotb.test(name="F42")
+async def test_f42_reset_during_load_resets_address_not_prior_memory(dut):
+    await start(dut)
     await load_word(dut, instruction(LOAD, 1))
     await load_word(dut, instruction(LOAD, 2))
     await load_word(dut, instruction(LOAD, 3))
@@ -164,8 +210,10 @@ async def test_vplan_run_load_reset_edges(dut):
     await expect_next(dut, 2, "F42 word one retained")
     await expect_next(dut, 3, "F42 word two retained")
 
-    # F43: zero-shift and zero-XOR commit without changing ACC.
-    await reset(dut)
+
+@cocotb.test(name="F43")
+async def test_f43_zero_shift_and_xor_commit_results(dut):
+    await start(dut)
     await load_program(
         dut,
         [
@@ -177,7 +225,7 @@ async def test_vplan_run_load_reset_edges(dut):
             instruction(HALT),
             instruction(HALT),
             instruction(HALT),
-        ]
+        ],
     )
     await start_running(dut)
     await expect_next(dut, 21, "F43 LOAD")

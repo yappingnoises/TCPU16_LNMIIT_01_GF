@@ -1,0 +1,27 @@
+[*]
+[*] GTKWave Analyzer
+[dumpfile] "F44a.fst"
+[savefile] "F44a.gtkw"
+[timestart] 0
+[treeopen] tb.
+[treeopen] tb.tcpu.
+[treeopen] tb.tcpu.cpu.
+[signals_width] 220
+[sst_expanded] 1
+@28
+tb.clk
+tb.rst_n
+tb.tcpu.cpu.run_s1
+tb.tcpu.cpu.run_sync
+tb.tcpu.cpu.pl_s1
+tb.tcpu.cpu.pl_sync
+tb.tcpu.cpu.rst_s1
+tb.tcpu.cpu.rst_sync
+tb.tcpu.cpu.u_prog_loader.load_pulse
+@22
+tb.ui_in[7:0]
+tb.uio_in[7:0]
+tb.uo_out[7:0]
+tb.tcpu.cpu.pc[2:0]
+tb.tcpu.cpu.acc[15:0]
+tb.tcpu.cpu.u_prog_loader.load_addr[2:0]

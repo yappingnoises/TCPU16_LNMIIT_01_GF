@@ -18,8 +18,12 @@ does not depend on preserved internal hierarchy.
 The RTL F35 reference-model test runs 1,000 deterministic, fully loaded
 programs for 64 edges each with randomized `run` control. At each edge it
 checks both output bytes; RTL also compares the architectural registers
-against the model. Both RTL and gate-level runs pass all eight grouped
-tests against the current source.
+against the model. The suite contains 44 independently reported Cocotb tests;
+each verification case can now fail without hiding the outcome of unrelated
+cases. For CPU architecture, design decisions, and schematic spaces, see
+[TCPU-16 design documentation](design.md). To generate one waveform per
+testcase, follow the instructions in the
+[testbench guide](../test/README.md#per-test-waveforms).
 
 Install Icarus Verilog and the Python packages listed in
 [`test/requirements.txt`](../test/requirements.txt). From the repository root:
@@ -52,8 +56,8 @@ latency assertion is made when RTL hierarchy is available.
 
 In this workspace, `test/gate_level_netlist.v` was regenerated from checkout
 `a47cac1` using an isolated LibreLane run at
-`src/runs/current-source-cpu-tests/`. All eight grouped RTL tests and all
-eight grouped gate-level tests pass. The older hardening snapshot under
+`src/runs/current-source-cpu-tests/`. All 44 RTL tests and all 44 gate-level
+tests pass. The older hardening snapshot under
 `runs/wokwi/` is preserved and records source commit `34ee4c8`; its netlist
 predates the current PC/IR ownership change and must not be copied over the
 current test netlist.
