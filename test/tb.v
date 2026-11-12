@@ -6,14 +6,14 @@
 */
 module tb ();
 
-  // Dump the signals to a FST file. You can view it with gtkwave or surfer.
-integer i;
+  // Dump signals to FST; an Icarus plusarg selects an individual test's file.
+  reg [4095:0] waveform_file;
   initial begin
-    $dumpfile("tb.fst");
-    $dumpvars(0, tb);
-    //  for (i = 0; i < 8; i = i + 1) begin
-    //     $dumpvars(0, tcpu.cpu.u_prog_mem.mem[i]);
-    // end
+      if (!$value$plusargs("WAVEFORM=%s", waveform_file)) begin
+        waveform_file = "tb.fst";
+      end
+      $dumpfile(waveform_file);
+      $dumpvars(0, tb);
     #1;
   end
 

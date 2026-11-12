@@ -13,11 +13,10 @@ from coros.bench import (
     start_running,
 )
 
-@cocotb.test()
-async def test_vplan_interface_and_defined_outputs(dut):
-    await start(dut)
 
-    # F37: verify the Tiny Tapeout pin names and widths.
+@cocotb.test(name="F37")
+async def test_f37_tiny_tapeout_interface_widths_and_defined_pins(dut):
+    await start(dut)
     for pin_name, width in (
         ("ui_in", 8),
         ("uo_out", 8),
@@ -34,12 +33,14 @@ async def test_vplan_interface_and_defined_outputs(dut):
     assert read_resolvable(dut.uio_out, "F37 uio_out") == 0
     assert read_resolvable(dut.uio_oe, "F37 uio_oe") == 0
 
-    # F38: after reset and a complete load, the output and architectural state
-    # are defined. RTL runs also check the internal architectural registers.
+
+@cocotb.test(name="F38")
+async def test_f38_outputs_and_architectural_state_are_defined(dut):
+    await start(dut)
     await load_program(
         dut,
         [instruction(LOAD, 0), instruction(ADD, 1)]
-        + [instruction(HALT)] * 6
+        + [instruction(HALT)] * 6,
     )
     await start_running(dut)
     await expect_next(dut, 0, "F38 initialized output")

@@ -16,3 +16,12 @@ test/results.xml
 test/gate_level_netlist.v
 vplan
 waveforms
+!waveforms/
+waveforms/*
+!waveforms/F05.pdf
+!waveforms/F06.pdf
+!waveforms/F07.pdf
+!waveforms/rtl/
+waveforms/rtl/*
+!waveforms/rtl/*.fst
+!waveforms/rtl/*.gtkw

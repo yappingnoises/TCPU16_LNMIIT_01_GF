@@ -1,0 +1,29 @@
+[*]
+[*] GTKWave Analyzer
+[dumpfile] "F17.fst"
+[savefile] "F17.gtkw"
+[timestart] 0
+[treeopen] tb.
+[treeopen] tb.tcpu.
+[treeopen] tb.tcpu.cpu.
+[signals_width] 220
+[sst_expanded] 1
+@28
+tb.clk
+tb.rst_n
+tb.tcpu.cpu.execute
+tb.tcpu.cpu.alu_acc_wr
+tb.tcpu.cpu.jump_en
+tb.tcpu.cpu.halted
+@22
+tb.ui_in[7:0]
+tb.uio_in[7:0]
+tb.uo_out[7:0]
+tb.tcpu.cpu.pc[2:0]
+tb.tcpu.cpu.ir[7:0]
+tb.tcpu.cpu.acc[15:0]
+tb.tcpu.cpu.instr[7:0]
+tb.tcpu.cpu.u_ALU.opcode[2:0]
+tb.tcpu.cpu.u_ALU.imm[4:0]
+tb.tcpu.cpu.alu_acc_out[15:0]
+tb.tcpu.cpu.jump_addr[2:0]

@@ -52,6 +52,8 @@ limitations.
 - [`src/`](src/) — CPU RTL and Tiny Tapeout wrapper.
 - [`test/`](test/) — Cocotb testbenches and simulation setup.
 - [`docs/info.md`](docs/info.md) — datasheet content consumed by Tiny Tapeout.
+- [`docs/design.md`](docs/design.md) — architecture, implementation decisions,
+  and spaces for generated schematics.
 - [`docs/verification.md`](docs/verification.md) — how to run tests, what they
   currently check, CI workflows, and hardening evidence.
 - `runs/wokwi/` — local hardening logs and generated artifacts when a flow has

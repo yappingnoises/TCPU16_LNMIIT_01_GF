@@ -17,7 +17,7 @@ from cocotb.triggers import Timer
 
 from coros.reference_model import advance, new_state
 
-@cocotb.test()
+@cocotb.test(name="F35")
 async def test_vplan_random_reference_model(dut):
     await start(dut)
     rng = random.Random(0x16C0C07)

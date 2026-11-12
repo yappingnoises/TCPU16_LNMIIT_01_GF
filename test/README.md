@@ -8,7 +8,8 @@ The verification-plan tests are split by behavior into separate modules and
 share setup and driver coroutines from `testbenches/coros/`. The same tests run
 against RTL and gate-level simulations. For the coverage summary, CI
 workflows, and hardening evidence, see the
-[project verification notes](../docs/verification.md).
+[project verification notes](../docs/verification.md) and
+[design documentation](../docs/design.md).
 
 ## Prerequisites
 
@@ -26,10 +27,11 @@ python -m cocotb_tools.check_results results.xml
 ```
 
 The Makefile selects the test modules in `testbenches/` for RTL simulation.
-Together they cover F01–F43, the Mode O synchronizer-latency check, and a
-deterministic reference-model test over 1,000 fully initialized programs with
-64 randomized run-control edges each. RTL runs also compare the architectural
-registers to the reference model when those internal signals are available.
+The 44 Cocotb tests cover F01–F43, the Mode O synchronizer-latency checks, and
+a deterministic reference-model test over 1,000 fully initialized programs
+with 64 randomized run-control edges each. RTL runs also compare the
+architectural registers to the reference model when those internal signals are
+available. Each verification case is reported independently.
 
 ## Gate-level simulation
 
@@ -58,7 +60,7 @@ outputs; internal-register checks are performed only when RTL hierarchy is
 available.
 
 In this workspace, `gate_level_netlist.v` was regenerated from the current
-checkout (`a47cac1`) and all eight grouped tests pass in gate-level simulation.
+checkout (`a47cac1`) and all 44 tests pass in gate-level simulation.
 The older hardening snapshot under `runs/wokwi/` is intentionally preserved;
 do not copy its netlist over the current test netlist.
 
@@ -75,3 +77,31 @@ Or use Surfer:
 ```sh
 surfer tb.fst
 ```
+
+## Per-test waveforms
+
+Generate a matching FST waveform and GTKWave save file for every Cocotb test,
+with each test run in its own simulation. The save file opens the signals
+relevant to that test:
+
+```sh
+python generate_waveforms.py
+```
+
+RTL waveform and GTKWave pairs are written to `waveforms/rtl/` and are checked
+in with the project. Open a pair from that directory:
+
+```sh
+cd ../waveforms/rtl
+gtkwave F09.fst F09.gtkw
+```
+
+To capture the same per-test traces from the gate-level netlist:
+
+```sh
+python generate_waveforms.py --gates
+```
+
+The gate-level option requires the current `gate_level_netlist.v` and GF180
+PDK setup described above. Gate-level FSTs use public pin signals; RTL FSTs
+also show internal CPU state.

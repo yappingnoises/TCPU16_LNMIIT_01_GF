@@ -1,0 +1,22 @@
+[*]
+[*] GTKWave Analyzer
+[dumpfile] "F37.fst"
+[savefile] "F37.gtkw"
+[timestart] 0
+[treeopen] tb.
+[treeopen] tb.tcpu.
+[treeopen] tb.tcpu.cpu.
+[signals_width] 220
+[sst_expanded] 1
+@28
+tb.clk
+tb.rst_n
+tb.tcpu.cpu.byte_sel
+tb.tcpu.cpu.halted
+@22
+tb.ui_in[7:0]
+tb.uio_in[7:0]
+tb.uo_out[7:0]
+tb.tcpu.cpu.pc[2:0]
+tb.tcpu.cpu.acc[15:0]
+tb.tcpu.cpu.ir[7:0]

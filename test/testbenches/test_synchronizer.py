@@ -2,6 +2,7 @@ import cocotb
 
 from coros.bench import (
     ADD,
+    HALT,
     LOAD,
     accumulator,
     drive,
@@ -15,15 +16,13 @@ from coros.bench import (
     tick,
 )
 
-@cocotb.test()
-async def test_vplan_synchronizer_latency(dut):
-    await start(dut)
 
-    # F44 (Mode O): run reaches the execution logic after two synchronizer
-    # stages; the first instruction commits on the following active edge.
+@cocotb.test(name="F44a")
+async def test_f44_run_and_load_synchronizer_latency(dut):
+    await start(dut)
     await load_program(
         dut,
-        [instruction(LOAD, 13)] + [instruction(ADD, 1)] * 7
+        [instruction(LOAD, 13)] + [instruction(ADD, 1)] * 7,
     )
     loader = rtl_loader(dut)
     await drive(dut, prog_load=1)
@@ -43,8 +42,17 @@ async def test_vplan_synchronizer_latency(dut):
     await expect_acc(dut, 0, "F44 run latency edge 2")
     await expect_next(dut, 14, "F44 run latency edge 3")
 
-    # Reset is synchronized too; architectural state remains intact for the
-    # first two edges and is cleared by the third.
+
+@cocotb.test(name="F44b")
+async def test_f44_reset_synchronizer_latency(dut):
+    await start(dut)
+    await load_program(
+        dut,
+        [instruction(LOAD, 13)] + [instruction(HALT)] * 7,
+    )
+    await drive(dut, run=1)
+    await tick(dut, 4)
+    await expect_acc(dut, 13, "F44 establish nonzero accumulator")
     await drive(dut, run=0)
     await tick(dut, 3)
     paused_acc = await accumulator(dut)

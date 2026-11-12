@@ -31,7 +31,7 @@ end
 /*A == declared for verification visibility*/
 reg [2:0] pc; //current pointer of program counter
 reg [15:0] acc; //accumulator register
-reg [7:0] ir; //current instruction |||| A
+/* verilator lint_off UNUSEDSIGNAL */ reg [7:0] ir; //instruction register
 reg halted; //halted flag
 
 //B intermediate signals 
@@ -42,11 +42,10 @@ wire jump_en; //jump enable
 wire [2:0] jump_addr; //jump address
 
 wire [7:0] instr; //instruction read from memory
-wire [2:0] pc_next; //next PC value from PC module
 wire [15:0] alu_acc_out; //ALU computed accumulator
 wire alu_acc_wr; //ALU writes to ACC
 wire alu_halted; //ALU halt detected
-//wire [7:0] ir_val; //IR registered instruction
+
 
 
 assign execute = run_sync & ~halted;
