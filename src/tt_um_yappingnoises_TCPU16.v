@@ -4,6 +4,9 @@
  */
 
 `default_nettype none
+(* blackbox *) (* keep *)
+module my_logo ();
+endmodule
 
 module tt_um_yappingnoises_TCPU16 (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -33,5 +36,9 @@ module tt_um_yappingnoises_TCPU16 (
   assign uio_oe  = 8'b0;
 
   wire _unused = &{ena, uio_in[7:3], 1'b0};
+
+  (* keep *)
+  my_logo logo();
+
 
 endmodule

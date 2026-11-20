@@ -70,5 +70,29 @@
   "MAGIC_DEF_LABELS": 0,
 
   "//": "Only export pin area in LEF (without any connected nets)",
-  "MAGIC_WRITE_LEF_PINONLY": 1
+  "MAGIC_WRITE_LEF_PINONLY": 1,
+
+  "MACROS": {
+  "my_logo": {
+    "instances": {
+      "logo": {
+        "location": [30, 10],
+        "orientation": "N"
+      }
+    },
+    "gds": ["dir::/macros/my_logo.gds"],
+    "lef": ["dir::/macros/my_logo.lef"]
+  }
+},
+"ERROR_ON_PDN_VIOLATIONS": false,
+"RUN_PDN": false,
+"RUN_LVS": false,
+
+"IGNORE_DISCONNECTED_MODULES": [
+  "my_logo", "logo"
+],
+"ERROR_ON_DISCONNECTED_PINS": false
+
+
 }
+
