@@ -73,30 +73,5 @@ current test netlist.
 - [`docs.yaml`](../.github/workflows/docs.yaml) builds the Tiny Tapeout
   documentation.
 
-The local test commands above are useful for iteration; CI and the latest
-workflow artifacts should be consulted for the status of a particular commit.
 
-## Local hardening snapshot
 
-The older local outputs in `runs/wokwi/` record source commit `34ee4c8` (as
-noted in `runs/wokwi/final/commit_id.json`), not the current checkout. A
-separate current-source run was generated under
-`src/runs/current-source-cpu-tests/` and used for the passing gate-level
-tests. These generated outputs are not tracked by Git and may not be present
-on another clone. For the preserved `runs/wokwi/` snapshot:
-
-- The flow reports no lint errors or timing-construct errors; it reports two
-  lint warnings.
-- Magic DRC and LVS checks are reported clear; the KLayout DRC step was
-  skipped by the flow configuration.
-- Hold checks report no violations. The post-P&R summary reports setup
-  violations in slow-corner timing scenarios (worst overall setup slack
-  `-7.4392` in the report's time units).
-- The flow log mentions a generic fallback SDC because project-specific
-  `PNR_SDC_FILE` and `SIGNOFF_SDC_FILE` were not defined. Treat the timing
-  numbers as evidence from that run's constraints, not as a current timing
-  sign-off.
-
-Before using physical-design metrics as current project results, rerun the
-hardening flow for the current source and review its timing constraints,
-reports, and workflow status.
