@@ -1,6 +1,6 @@
 # Tiny Tapeout project information
 project:
-  title:        "TCPU16_LNMIIT_01"      # Project title
+  title:        "Tiny General-Purpose Tapeout Targeting Open Silicon (TGTTOS)"      # Project title
   author:       "Toshi"      # Your name
   discord:      "yappingnoises"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "An 8-bit instruction, 16-bit accumulator CPU with serial program loading" # One line description
